@@ -1,0 +1,223 @@
+[
+    {
+        "archi": "a8:at86rf231", 
+        "network_address": "a8-1.lyon.iot-lab.info", 
+        "y": "2.1", 
+        "x": "1.31", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "a8:at86rf231", 
+        "network_address": "a8-2.lyon.iot-lab.info", 
+        "y": "2.51", 
+        "x": "1.31", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "a8:at86rf231", 
+        "network_address": "a8-3.lyon.iot-lab.info", 
+        "y": "1.6", 
+        "x": "3.1", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "a8:at86rf231", 
+        "network_address": "a8-4.lyon.iot-lab.info", 
+        "y": "1.6", 
+        "x": "3.82", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "a8:at86rf231", 
+        "network_address": "a8-5.lyon.iot-lab.info", 
+        "y": "2.70", 
+        "x": "4.5", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "a8:at86rf231", 
+        "network_address": "a8-6.lyon.iot-lab.info", 
+        "y": "3.92", 
+        "x": "4.5", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "a8:at86rf231", 
+        "network_address": "a8-7.lyon.iot-lab.info", 
+        "y": "4.56", 
+        "x": "4.5", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "a8:at86rf231", 
+        "network_address": "a8-8.lyon.iot-lab.info", 
+        "y": "6.2", 
+        "x": "6.94", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "a8:at86rf231", 
+        "network_address": "a8-9.lyon.iot-lab.info", 
+        "y": "3.4", 
+        "x": "8.35", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "a8:at86rf231", 
+        "network_address": "a8-10.lyon.iot-lab.info", 
+        "y": "4.22", 
+        "x": "8.35", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "a8:at86rf231", 
+        "network_address": "a8-11.lyon.iot-lab.info", 
+        "y": "6.2", 
+        "x": "10.81", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-1.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-dc-97-68", 
+        "y": "4", 
+        "x": "1.31", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-2.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-d6-88-67", 
+        "y": "6.2", 
+        "x": "3.2", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-3.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-db-86-76", 
+        "y": "6.2", 
+        "x": "3.89", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-4.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-d6-b1-81", 
+        "y": "2.02", 
+        "x": "4.5", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-5.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-d8-89-68", 
+        "y": "2.65", 
+        "x": "4.5", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-6.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-da-c2-79", 
+        "y": "1.6", 
+        "x": "5.11", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-7.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-d9-a3-71", 
+        "y": "6.2", 
+        "x": "5.19", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-8.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-da-a6-83", 
+        "y": "1.6", 
+        "x": "5.8", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-9.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-d8-b6-77", 
+        "y": "6.2", 
+        "x": "5.88", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-10.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-db-89-76", 
+        "y": "6.2", 
+        "x": "7.33", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-11.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-db-84-67", 
+        "y": "3.81", 
+        "x": "8.35", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-12.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-dd-b6-82", 
+        "y": "5.19", 
+        "x": "8.35", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-13.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-d8-b1-76", 
+        "y": "5.61", 
+        "x": "8.35", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-14.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-02-d6-28-60", 
+        "y": "6.2", 
+        "x": "8.33", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-15.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-d9-a3-77", 
+        "y": "6.2", 
+        "x": "8.96", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-16.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-d7-b9-78", 
+        "y": "6.2", 
+        "x": "9.60", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-17.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-03-d8-a1-68", 
+        "y": "6.2", 
+        "x": "10.4", 
+        "z": "2.78"
+    }, 
+    {
+        "archi": "m3:at86rf231", 
+        "network_address": "m3-18.lyon.iot-lab.info", 
+        "mac": "05-43-32-ff-02-da-32-61", 
+        "y": "6.2", 
+        "x": "11.42", 
+        "z": "2.78"
+    }
+]
