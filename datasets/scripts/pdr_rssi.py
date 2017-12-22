@@ -1,3 +1,12 @@
+"""
+This script plots the PDR over average RSSI.
+The PDR is calculated over all the channel for each link.
+This plot is better known as the Waterfall plot.
+
+Usage example:
+  $ python pdr_rssi.py grenoble 2017.06.20-16.22.15
+"""
+
 import argparse
 import pandas as pd
 import DatasetHelper
@@ -17,7 +26,7 @@ def get_pdr(df_link):
 
     return pd.Series({
         "mean_rssi": round(df_link["rssi"].mean() * 2) / 2,
-        "pdr": float(rx_count) * 100 / tx_count
+        "pdr": rx_count * 100 / float(tx_count)
     })
 
 
@@ -33,11 +42,6 @@ def main():
     # load the dataset
     raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
     df = DatasetHelper.load_dataset(raw_file_path)
-
-    # clean dataset
-
-    df = df.drop_duplicates()
-    df = df[(df.crc == 1) & (df.expected == 1)]
 
     # compute PDR and RSSI average for each link
 
@@ -58,7 +62,7 @@ def main():
     plt.xlabel('RSSI average (dBm)')
     plt.ylabel('PDR %')
     plt.xlim([-95, -35])
-    plt.ylim([0, 100])
+    plt.ylim([0, 110])
     plt.tight_layout()
 
     plt.grid(True)

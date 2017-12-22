@@ -52,7 +52,7 @@ def main():
     dtsh = DatasetHelper.helper(df)
 
     # compute degree and radius
-    net_degree_list = []
+    avg_degree_list = []
     net_radius_list = []
     for name, df_goup in df.groupby(["transctr"]):
         if df_goup.empty:
@@ -63,16 +63,15 @@ def main():
         G.add_nodes_from(df_goup.srcmac)
         G.add_edges_from(df_goup.groupby(["srcmac", "mac"]).groups.keys())
 
-        # calculate network degree
-        max_edge_count = DatasetHelper.get_max_edge_count(G.number_of_nodes())
-        net_degree = G.number_of_edges() / float(max_edge_count)
+        # calculate average degree
+        avg_degree = sum([d[1] for d in G.degree()]) / float(G.number_of_nodes())
 
         # save degree and radius
-        net_degree_list.append(net_degree)
+        avg_degree_list.append(avg_degree)
         net_radius_list.append(nx.radius(G))
 
     # calculate average degree and radius
-    avg_net_degree = sum(net_degree_list) / float(len(net_degree_list))
+    avg_net_degree = sum(avg_degree_list) / float(len(avg_degree_list))
     avg_net_radius = sum(net_radius_list) / float(len(net_radius_list))
 
     # format collected information

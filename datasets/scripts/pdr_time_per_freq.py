@@ -1,3 +1,10 @@
+"""
+This script plots the PDR over time per channel.
+
+Usage example:
+  $ python pdr_time_per_channel.py grenoble 2017.06.20-16.22.15
+"""
+
 import argparse
 import pandas as pd
 import DatasetHelper
@@ -13,11 +20,12 @@ OUT_PATH = "../processed"
 def get_pdr(df_link):
     dtsh_link = DatasetHelper.helper(df_link)
     rx_count = len(df_link)
-    tx_count = dtsh_link["tx_count"] * dtsh_link["transaction_count"]
+    tx_count = dtsh_link["tx_count"] *\
+               dtsh_link["transaction_count"]
 
     return pd.Series({
         "datetime": df_link.datetime.iloc[0],
-        "pdr": float(rx_count) / tx_count
+        "pdr": 0.8*rx_count / float(tx_count)
     })
 
 
