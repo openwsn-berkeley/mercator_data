@@ -51,16 +51,11 @@ def main():
     # load the dataset
     raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
     df = DatasetHelper.load_dataset(raw_file_path)
-
-    # clean dataset
-    df = df.drop_duplicates()
-    df = df[(df.crc == 1) & (df.expected == 1)]
-
     dtsh = DatasetHelper.helper(df)
 
     # get nodes info
-
     node_list = DatasetHelper.get_nodes_info(args.testbed)
+    print node_list
 
     # compute paths list
     path_list = []
@@ -112,7 +107,6 @@ def main():
         "global": {
             "start_date": dtsh["start_date"],
             "end_date": dtsh["end_date"],
-            "duration": dtsh["duration"],
             "nb_nodes": dtsh["node_count"],
             "nb_channels": dtsh["channel_count"],
             "transaction_count": dtsh["transaction_count"],

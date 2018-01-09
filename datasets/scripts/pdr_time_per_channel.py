@@ -6,9 +6,11 @@ Usage example:
 """
 
 import argparse
+import logging
 import pandas as pd
-import DatasetHelper
 import matplotlib.pyplot as plt
+
+import DatasetHelper
 
 # ============================== defines ======================================
 
@@ -41,6 +43,7 @@ def main():
     # load the dataset
     raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
     df = DatasetHelper.load_dataset(raw_file_path)
+    logging.info("Dataset loaded.")
     print df.head()
 
     # compute PDR and RSSI average for each link and for each frequency
@@ -49,7 +52,7 @@ def main():
 
     for link, df_link in df_pdr.groupby(["srcmac", "mac"]):
         for freq, df_freq in df_link.groupby("frequency"):
-            plt.plot(df_freq.datetime, df_freq.pdr + freq, '+', zorder=0)
+            plt.plot(df_freq.datetime, df_freq.pdr + freq, '.', zorder=0, markersize=2)
         break
 
     plt.xlabel('Time')
@@ -59,7 +62,7 @@ def main():
     plt.grid(True)
     plt.gcf().autofmt_xdate()
 
-    plt.savefig("{0}/{1}/{2}_pdr_time_per_freq.png".format(OUT_PATH, args.testbed, args.date),
+    plt.savefig("{0}/{1}/{2}_pdr_time_per_channel.png".format(OUT_PATH, args.testbed, args.date),
                 format='png', bbox_inches='tight', pad_inches=0)
     plt.show()
 

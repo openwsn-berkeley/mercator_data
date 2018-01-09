@@ -20,7 +20,9 @@ OUT_PATH = "../processed"
 def get_pdr(df_link):
     dtsh_link = DatasetHelper.helper(df_link)
     rx_count = len(df_link)
-    tx_expected = dtsh_link["tx_count"] * dtsh_link["transaction_count"] * dtsh_link["node_count"] * (dtsh_link["node_count"] - 1)
+    tx_expected = dtsh_link["tx_count"] *\
+                  dtsh_link["transaction_count"] *\
+                  dtsh_link["node_count"] * (dtsh_link["node_count"] - 1)
 
     return pd.Series({
         "pdr": rx_count * 100 / float(tx_expected)
@@ -48,7 +50,7 @@ def main():
     plt.xlabel('Channels')
     plt.ylabel('PDR %')
     plt.xlim([10, 27])
-    plt.ylim([0, 110])
+    plt.ylim([40, 102])
     plt.tight_layout()
 
     plt.grid(True)

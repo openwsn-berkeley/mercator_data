@@ -22,7 +22,6 @@ def get_pdr(df_link):
     dtsh_link = DatasetHelper.helper(df_link)
     rx_count = len(df_link)
     tx_count = dtsh_link["tx_count"] *\
-               dtsh_link["transaction_count"] *\
                dtsh_link["channel_count"]
 
     return pd.Series({
@@ -47,8 +46,11 @@ def main():
     df_pdr = df.groupby(["srcmac", "mac", "transctr"]).apply(get_pdr).reset_index()
     df_pdr['datetime'] = pd.to_datetime(df_pdr.datetime)
 
+    pdr_grouped = df.pdr.groupby(pd.TimeGrouper('25Min')).mean().dropna()
+
     # plot
     plt.plot(df_pdr.datetime, df_pdr.pdr, '+')
+    plt.plot(pdr_grouped.index, pdr_grouped)
 
     plt.xlabel('Time')
     plt.ylabel('PDR (%)')
@@ -56,10 +58,10 @@ def main():
     plt.grid(True)
     plt.gcf().autofmt_xdate()
 
-    plt.show()
-
     plt.savefig("{0}/{1}/{2}_pdr_time.png".format(OUT_PATH, args.testbed, args.date),
                 format='png', bbox_inches='tight', pad_inches=0)
+
+    plt.show()
 
     # plot per link
     # plt.yticks(df_pdr.frequency.unique())

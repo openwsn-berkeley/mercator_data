@@ -45,7 +45,7 @@ def main():
     df_pdr = df.groupby(["srcmac", "mac"]).apply(get_pdr).reset_index()
 
     # plot
-    plt.hist(df_pdr.pdr)
+    plt.hist(df_pdr.pdr, bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
 
     plt.xlabel('PDR %')
     plt.ylabel('#links')

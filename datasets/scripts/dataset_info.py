@@ -26,8 +26,16 @@ import os
 import argparse
 import json
 import networkx as nx
+import pandas as pd
+import logging
 
 import DatasetHelper
+
+# ============================== logging ======================================
+
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 # ============================== defines ======================================
 
@@ -36,6 +44,15 @@ OUT_PATH = "../processed"
 
 # ============================== main =========================================
 
+def get_pdr(df_link, dtsh):
+    rx_count = len(df_link)
+    tx_count = dtsh["tx_count"] * \
+               dtsh["channel_count"]
+
+    return pd.Series({
+        "datetime": df_link.datetime.iloc[0],
+        "pdr": 100*rx_count / float(tx_count)
+    })
 
 def main():
 
@@ -48,31 +65,39 @@ def main():
     # load the dataset
     raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
     df = DatasetHelper.load_dataset(raw_file_path)
+    logging.info("Dataset loaded.")
 
     dtsh = DatasetHelper.helper(df)
 
     # compute degree and radius
     avg_degree_list = []
-    net_radius_list = []
     for name, df_goup in df.groupby(["transctr"]):
+        logging.info("Transaction: {0}".format(name))
         if df_goup.empty:
             continue
+
+        # calculate pdr
+        df_pdr = df.groupby(["srcmac", "mac"]).apply(get_pdr, dtsh)
+        df_pdr.reset_index(inplace=True)
+
+        # removing links with PDR <= 50
+        df_pdr = df_pdr[df_pdr.pdr > 50]
 
         # create graph
         G = nx.Graph()
         G.add_nodes_from(df_goup.srcmac)
-        G.add_edges_from(df_goup.groupby(["srcmac", "mac"]).groups.keys())
+        G.add_edges_from(df_pdr.groupby(["srcmac", "mac"]).groups.keys())
 
         # calculate average degree
         avg_degree = sum([d[1] for d in G.degree()]) / float(G.number_of_nodes())
 
         # save degree and radius
         avg_degree_list.append(avg_degree)
-        net_radius_list.append(nx.radius(G))
+
+        del df_pdr
 
     # calculate average degree and radius
     avg_net_degree = sum(avg_degree_list) / float(len(avg_degree_list))
-    avg_net_radius = sum(net_radius_list) / float(len(net_radius_list))
 
     # format collected information
     json_data = {
@@ -84,8 +109,7 @@ def main():
         "tx_count": dtsh["tx_count"],
         "tx_ifdur": dtsh["tx_ifdur"],
         "tx_length": dtsh["tx_length"],
-        "degree": avg_net_degree,
-        "radius": avg_net_radius,
+        "avg_degree": avg_net_degree,
     }
     print(json.dumps(json_data, indent=4))
 

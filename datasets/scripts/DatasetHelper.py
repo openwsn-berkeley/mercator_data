@@ -55,12 +55,12 @@ def helper(df):
         tx_length = df["txlength"].iloc[0]
 
     return {
-        "node_count": len(df.groupby("mac")),
+        "node_count": len(df.mac.unique()),
         "channel_count": len(df.frequency.unique()),
         "tx_count": int(tx_count),
         "tx_ifdur": int(df["txifdur"].iloc[0]),
         "tx_length": int(tx_length),
-        "transaction_count": len(df.groupby("transctr")),
+        "transaction_count": len(df.transctr.unique()),
         "start_date": df.datetime.iloc[0].strftime("%Y-%m-%d %H:%M:%S"),
         "end_date": df.datetime.iloc[-1].strftime("%Y-%m-%d %H:%M:%S"),
     }
