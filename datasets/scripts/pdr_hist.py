@@ -40,16 +40,17 @@ def main():
     # load the dataset
     raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
     df = DatasetHelper.load_dataset(raw_file_path)
+    print df.head()
 
     # compute PDR for each link
     df_pdr = df.groupby(["srcmac", "mac"]).apply(get_pdr).reset_index()
 
     # plot
-    plt.hist(df_pdr.pdr, bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+    plt.hist(df_pdr.pdr, bins=[i*5 for i in range(0, 21)])
 
     plt.xlabel('PDR %')
-    plt.ylabel('#links')
-    plt.xlim([0, 110])
+    plt.ylabel('#measurements')
+    plt.xlim([0, 100])
     plt.tight_layout()
     plt.grid(True)
 
