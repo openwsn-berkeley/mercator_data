@@ -77,8 +77,7 @@ def main():
             continue
 
         # calculate pdr
-        df_pdr = df.groupby(["srcmac", "mac"]).apply(get_pdr, dtsh)
-        df_pdr.reset_index(inplace=True)
+        df_pdr = df_goup.groupby(["srcmac", "mac"]).apply(get_pdr, dtsh).reset_index()
 
         # removing links with PDR <= 50
         df_pdr = df_pdr[df_pdr.pdr > 50]
