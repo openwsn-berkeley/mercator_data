@@ -29,8 +29,8 @@ import DatasetHelper
 
 # ============================== defines ======================================
 
-RAW_PATH = "../raw"
-OUT_PATH = "../processed"
+RAW_PATH = "../processed"
+OUT_PATH = "../results"
 
 # ============================== main =========================================
 
@@ -59,13 +59,13 @@ def main():
 
     # compute paths list
     path_list = []
-    df["hash"] = df.apply(lambda row: (get_hash(row["mac"], row["srcmac"])), axis=1)
+    df["hash"] = df.apply(lambda row: (get_hash(row["dst"], row["src"])), axis=1)
     for hash, link in df.groupby(["hash"]):
         AtoB = {}
         BtoA = {}
 
         # compute PDR for each link and separate A->B and B->A links
-        for m, gr in link.groupby(["mac"]):
+        for m, gr in link.groupby(["dst"]):
             print m
             rx_count = len(gr)
             rx_expected = dtsh["transaction_count"] * dtsh["tx_count"] * dtsh["channel_count"]
@@ -79,7 +79,7 @@ def main():
                 pdr = rx_count * 100 / rx_expected
                 pdr_list.append((channel, pdr))
 
-            dist = DatasetHelper.get_dist(node_list, gr["srcmac"].iloc[0], m)
+            dist = DatasetHelper.get_dist(node_list, gr["src"].iloc[0], m)
             if dist > dist_max:
                 dist = dist_max
             if dist < dist_min:
@@ -137,6 +137,7 @@ def check_hash(A, B, hash):
         return True
     else:
         return False
+
 
 if __name__ == '__main__':
     main()

@@ -13,22 +13,10 @@ import matplotlib.pyplot as plt
 
 # ============================== defines ======================================
 
-RAW_PATH = "../raw"
-OUT_PATH = "../processed"
+RAW_PATH = "../processed"
+OUT_PATH = "../results"
 
 # ============================== main =========================================
-
-def get_pdr(df_link):
-    dtsh_link = DatasetHelper.helper(df_link)
-    rx_count = len(df_link)
-    tx_count = dtsh_link["tx_count"] *\
-               dtsh_link["channel_count"]
-
-    return pd.Series({
-        "datetime": df_link.datetime.iloc[0],
-        "pdr": rx_count*100 / float(tx_count)
-    })
-
 
 def main():
 
@@ -42,19 +30,15 @@ def main():
     raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
     df = DatasetHelper.load_dataset(raw_file_path)
 
-    # compute PDR and RSSI average for each link
-    df_pdr = df.groupby(["srcmac", "mac", "transctr"]).apply(get_pdr).reset_index()
-    df_pdr['datetime'] = pd.to_datetime(df_pdr.datetime)
-
     pdr_grouped = df.pdr.groupby(pd.TimeGrouper('25Min')).mean().dropna()
 
     # plot
-    plt.plot(df_pdr.datetime, df_pdr.pdr, '+')
+    plt.plot(df.index, df.pdr, '+')
     plt.plot(pdr_grouped.index, pdr_grouped)
 
     plt.xlabel('Time')
     plt.ylabel('PDR (%)')
-    plt.ylim([0, 110])
+    plt.ylim([0, 1.1])
     plt.grid(True)
     plt.gcf().autofmt_xdate()
 

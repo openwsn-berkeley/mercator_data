@@ -12,22 +12,10 @@ import matplotlib.pyplot as plt
 
 # ============================== defines ======================================
 
-RAW_PATH = "../raw"
-OUT_PATH = "../processed"
+RAW_PATH = "../processed"
+OUT_PATH = "../results"
 
 # ============================== main =========================================
-
-def get_pdr(df_link):
-    dtsh_link = DatasetHelper.helper(df_link)
-    rx_count = len(df_link)
-    tx_expected = dtsh_link["tx_count"] *\
-                  dtsh_link["transaction_count"] *\
-                  dtsh_link["channel_count"]
-
-    return pd.Series({
-        "pdr": rx_count * 100 / float(tx_expected)
-    })
-
 
 def main():
 
@@ -42,11 +30,8 @@ def main():
     df = DatasetHelper.load_dataset(raw_file_path)
     print df.head()
 
-    # compute PDR for each link
-    df_pdr = df.groupby(["srcmac", "mac"]).apply(get_pdr).reset_index()
-
     # plot
-    plt.hist(df_pdr.pdr, bins=[i*5 for i in range(0, 21)])
+    plt.hist(df.pdr, bins=[i*5 for i in range(0, 21)])
 
     plt.xlabel('PDR %')
     plt.ylabel('#measurements')

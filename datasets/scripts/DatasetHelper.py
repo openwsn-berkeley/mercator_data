@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import os
 
-def load_dataset(raw_file_path):
+def load_raw_dataset(raw_file_path):
     if os.path.isfile(raw_file_path + ".csv"):
         raw_file_path += ".csv"
     elif os.path.isfile(raw_file_path + ".csv.gz"):
@@ -36,11 +36,35 @@ def load_dataset(raw_file_path):
                      )
 
     # clean dataset
+    print "Length: {0}".format(len(df))
     df = df.drop_duplicates()
+    print "Length without duplicates: {0}".format(len(df))
     df = df[(df.crc == 1) & (df.expected == 1)]
     df.drop('crc', axis=1, inplace=True)
     df.drop('expected', axis=1, inplace=True)
 
+    return df
+
+def load_dataset(raw_file_path):
+    if os.path.isfile(raw_file_path + ".csv"):
+        raw_file_path += ".csv"
+    elif os.path.isfile(raw_file_path + ".csv.gz"):
+        raw_file_path += ".csv.gz"
+    else:
+        print "Files supported: .csv and .csv.gz"
+        quit()
+
+    df = pd.read_csv(raw_file_path,
+                     dtype={"datetime": np.str,
+                           "src": np.str,
+                           "dst": np.str,
+                           "channel": np.uint8,
+                           "length":np.uint32,
+                           "rssi": np.int32,
+                           },
+                     parse_dates = ['datetime'],
+                     index_col = [0],  # make datetime column as index
+                     )
     return df
 
 def helper(df):

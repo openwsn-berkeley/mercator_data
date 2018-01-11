@@ -39,8 +39,8 @@ logger.setLevel(logging.DEBUG)
 
 # ============================== defines ======================================
 
-RAW_PATH = "../raw"
-OUT_PATH = "../processed"
+RAW_PATH = "../processed"
+OUT_PATH = "../results"
 
 # ============================== main =========================================
 
