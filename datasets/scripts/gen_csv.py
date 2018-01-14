@@ -17,6 +17,7 @@ import argparse
 import logging
 import pandas as pd
 from scipy.special import logsumexp
+import json
 
 import DatasetHelper
 
@@ -33,8 +34,9 @@ def get_pdr(df_link, dtsh):
 
     return pd.Series({
         "datetime": df_link.datetime.iloc[0],
-        "pdr": rx_count / float(tx_count),
-        "mean_rssi": round(logsumexp(df_link["rssi"]) * 2) / 2,
+        "transaction_id": df_link['transctr'].iloc[0],
+        "pdr": 100 * rx_count / float(tx_count),
+        "mean_rssi": round(logsumexp(df_link["rssi"]), 2),
     })
 
 
@@ -55,7 +57,8 @@ def main():
     dtsh = DatasetHelper.helper(df)
 
     # compute PDR and RSSI average for each link and for each frequency
-    df_pdr = df.groupby(["srcmac", "mac", "transctr", "frequency"]).apply(get_pdr, dtsh).reset_index()
+    df_pdr = df.groupby(["srcmac", "mac", "transctr", "frequency"]).\
+        apply(get_pdr, dtsh).reset_index()
 
     # free space (ugly you said?)
     del df
@@ -64,13 +67,22 @@ def main():
     df_pdr.drop('transctr', axis=1, inplace=True)
     df_pdr.set_index("datetime", inplace=True)
     df_pdr.sort_index(inplace=True)
-    df_pdr.rename(columns={'srcmac': 'src', 'mac': 'dst', 'frequency': 'channel'}, inplace=True)
+    df_pdr.rename(columns={'srcmac': 'src', 'mac': 'dst', 'frequency': 'channel'},
+                  inplace=True)
 
     # write dataset to file
-    path = "{0}/{1}/{2}.csv".format(OUT_PATH, args.testbed, args.date)
+    path = "{0}/{1}".format(OUT_PATH, args.testbed)
     if not os.path.exists(path):
         os.makedirs(path)
-    df_pdr.to_csv(path)
+    df_pdr.to_csv("{0}/{1}.csv".format(path, args.date))
+
+    # write dataset header at to of the csv
+    dtsh["site"] = args.testbed
+    header = json.dumps(dtsh)
+    with open("{0}/{1}.csv".format(path, args.date), 'r+') as f:
+        s = f.read()
+        f.seek(0, 0)
+        f.write(header + "\n" + s)
 
 
 if __name__ == '__main__':

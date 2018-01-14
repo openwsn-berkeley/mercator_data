@@ -44,16 +44,6 @@ OUT_PATH = "../results"
 
 # ============================== main =========================================
 
-def get_pdr(df_link, dtsh):
-    rx_count = len(df_link)
-    tx_count = dtsh["tx_count"] * \
-               dtsh["channel_count"]
-
-    return pd.Series({
-        "datetime": df_link.datetime.iloc[0],
-        "pdr": 100*rx_count / float(tx_count)
-    })
-
 def main():
 
     # parsing user arguments
@@ -76,16 +66,13 @@ def main():
         if df_goup.empty:
             continue
 
-        # calculate pdr
-        df_pdr = df_goup.groupby(["srcmac", "mac"]).apply(get_pdr, dtsh).reset_index()
-
         # removing links with PDR <= 50
-        df_pdr = df_pdr[df_pdr.pdr > 50]
+        df_pdr = df[df.pdr > 50]
 
         # create graph
         G = nx.Graph()
         G.add_nodes_from(df_goup.srcmac)
-        G.add_edges_from(df_pdr.groupby(["srcmac", "mac"]).groups.keys())
+        G.add_edges_from(df_pdr.groupby(["src", "dst"]).groups.keys())
 
         # calculate average degree
         avg_degree = sum([d[1] for d in G.degree()]) / float(G.number_of_nodes())

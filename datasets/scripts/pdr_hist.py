@@ -6,9 +6,9 @@ Usage example:
 """
 
 import argparse
-import pandas as pd
 import DatasetHelper
 import matplotlib.pyplot as plt
+import os
 
 # ============================== defines ======================================
 
@@ -17,32 +17,28 @@ OUT_PATH = "../results"
 
 # ============================== main =========================================
 
-def main():
+# parsing user arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("dataset", help="The path to the dataset", type=str)
+args = parser.parse_args()
 
-    # parsing user arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument("testbed", help="The name of the testbed data to process", type=str)
-    parser.add_argument("date", help="The date of the dataset", type=str)
-    args = parser.parse_args()
+# load the dataset
+file_name = os.path.basename(args.dataset)
+df, header = DatasetHelper.load_dataset(args.dataset)
+print df.head()
 
-    # load the dataset
-    raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
-    df = DatasetHelper.load_dataset(raw_file_path)
-    print df.head()
+# plot
+plt.hist(df.pdr.dropna(), bins=[i*5 for i in range(0, 21)])
 
-    # plot
-    plt.hist(df.pdr, bins=[i*5 for i in range(0, 21)])
+plt.xlabel('PDR %')
+plt.ylabel('number of PDR measurements')
+plt.xlim([0, 100])
+plt.tight_layout()
+plt.grid(True)
 
-    plt.xlabel('PDR %')
-    plt.ylabel('#measurements')
-    plt.xlim([0, 100])
-    plt.tight_layout()
-    plt.grid(True)
-
-    plt.savefig("{0}/{1}/{2}_pdr_hist.png".format(OUT_PATH, args.testbed, args.date),
-                format='png', bbox_inches='tight', pad_inches=0)
-    plt.show()
-
-
-if __name__ == '__main__':
-    main()
+path = "{0}/{1}".format(OUT_PATH, header['site'])
+if not os.path.exists(path):
+    os.makedirs(path)
+plt.savefig("{0}/pdr_hist_{1}.png".format(path, header['site']),
+            format='png', bbox_inches='tight', pad_inches=0)
+plt.show()

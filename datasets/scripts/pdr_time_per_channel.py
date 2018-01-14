@@ -7,8 +7,10 @@ Usage example:
 
 import argparse
 import logging
-import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as md
+import os
+import pandas as pd
 
 import DatasetHelper
 
@@ -19,52 +21,39 @@ OUT_PATH = "../results"
 
 # ============================== main =========================================
 
-def main():
+# parsing user arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("dataset", help="The path to the dataset", type=str)
+args = parser.parse_args()
 
-    # parsing user arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument("testbed", help="The name of the testbed data to process", type=str)
-    parser.add_argument("date", help="The date of the dataset", type=str)
-    args = parser.parse_args()
+# load the dataset
+file_name = os.path.basename(args.dataset)
+df, header = DatasetHelper.load_dataset(args.dataset)
+logging.info("Dataset loaded.")
 
-    # load the dataset
-    raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
-    df = DatasetHelper.load_dataset(raw_file_path)
-    logging.info("Dataset loaded.")
-    print df.head()
+color_list = ["blue", "red"]
+for link, df_link in df.groupby(["src", "dst"]):
+    for freq, df_freq in df_link.groupby("channel"):
+        df_grouped = df_freq.groupby(pd.Grouper(freq="15min")).first()
+        print df_grouped.pdr.fillna(0)
+        plt.plot(df_grouped.index, 0.8*df_grouped.pdr/100 + freq, '.', zorder=0, markersize=2,
+                 color=color_list[freq%len(color_list)])
 
-    # fill missing values when PDR = 0
-    # empty_array = []
-    # for transaction_id in range(0, dtsh["transaction_count"]):
-    #     for channel in range(11,27):
-    #         for link, df_link in df_pdr.groupby(["srcmac", "mac"]):
-    #             empty_array.append([link[0], link[1], transaction_id, channel])
-    # df_filled = pd.DataFrame(empty_array, columns=["srcmac", "mac", "transctr", "frequency"])
-    # print df_filled
-    # df_merged = pd.merge(df_filled, df_pdr, how='outer', on=["srcmac", "mac", "transctr", "frequency"])
-    # df_merged.datetime.interpolate(method='linear', inplace=True)
-    # df_merged.pdr.fillna(0, inplace=True)
-    # df_merged.datetime.dropna(inplace=True)
-    # print df_merged.head()
+    plt.xlabel('Time')
+    plt.ylabel('IEEE802.15.4 Channels')
+    plt.ylim([10, 27])
+    plt.xlim(["2017-12-19 21:34:57", "2017-12-22 21:34:57"])
+    plt.yticks(df.channel.unique())
+    plt.grid(True)
+    xfmt = md.DateFormatter('%H:%M:%S')
+    ax = plt.gca()
+    ax.xaxis.set_major_formatter(xfmt)
+    plt.gcf().autofmt_xdate()
 
-    color_list = ["blue", "red"]
-    for link, df_link in df.groupby(["src", "dst"]):
-        for freq, df_freq in df_link.groupby("channel"):
-            plt.plot(df_freq.index, 0.8*df_freq.pdr + freq, '.', zorder=0, markersize=2,
-                     color=color_list[freq%len(color_list)])
-
-        plt.xlabel('Time')
-        plt.ylabel('IEEE802.15.4 Channels')
-        plt.ylim([10, 27])
-        plt.yticks(df.channel.unique())
-        plt.grid(True)
-        plt.gcf().autofmt_xdate()
-
-        plt.savefig("{0}/{1}/{2}_{3}_pdr_time_per_channel.png".format(OUT_PATH, args.testbed, args.date, link),
-                    format='png', bbox_inches='tight', pad_inches=0)
-        plt.show()
-        plt.clf()
-
-
-if __name__ == '__main__':
-    main()
+    path = "{0}/{1}".format(OUT_PATH, header['site'])
+    if not os.path.exists(path):
+        os.makedirs(path)
+    plt.savefig("{0}/pdr_time_per_channel_{1}_{2}.png".format(path, header['site'], link),
+                format='png', bbox_inches='tight', pad_inches=0)
+    plt.show()
+    plt.clf()

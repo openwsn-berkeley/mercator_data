@@ -46,26 +46,15 @@ def load_raw_dataset(raw_file_path):
     return df
 
 def load_dataset(raw_file_path):
-    if os.path.isfile(raw_file_path + ".csv"):
-        raw_file_path += ".csv"
-    elif os.path.isfile(raw_file_path + ".csv.gz"):
-        raw_file_path += ".csv.gz"
-    else:
-        print "Files supported: .csv and .csv.gz"
-        quit()
+    with open(raw_file_path, 'r') as f:
+        header = json.loads(f.readline())
 
     df = pd.read_csv(raw_file_path,
-                     dtype={"datetime": np.str,
-                           "src": np.str,
-                           "dst": np.str,
-                           "channel": np.uint8,
-                           "length":np.uint32,
-                           "rssi": np.int32,
-                           },
                      parse_dates = ['datetime'],
                      index_col = [0],  # make datetime column as index
+                     skiprows=1,
                      )
-    return df
+    return df, header
 
 def helper(df):
     if "nbpackets" in df.keys():
