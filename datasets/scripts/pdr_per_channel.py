@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import logging
 import os
 
+plt.rcParams.update({'font.size': 14})
 # ============================== logging ======================================
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -39,10 +40,11 @@ df_grouped = df.groupby(df.channel).pdr.mean()
 plt.bar([int(i) for i in df_grouped.index], df_grouped.values)
 
 # plot
-plt.xlabel('IEEE802.15.4 Channels')
-plt.ylabel('PDR %')
+plt.xlabel('IEEE802.15.4 Channel')
+plt.ylabel('PDR (%)')
 plt.xlim([10, 27])
 plt.ylim([40, 102])
+plt.xticks([t for t in range(11,27)])
 plt.tight_layout()
 plt.grid(True)
 

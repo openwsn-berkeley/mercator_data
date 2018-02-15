@@ -10,6 +10,7 @@ import DatasetHelper
 import matplotlib.pyplot as plt
 import os
 
+plt.rcParams.update({'font.size': 14})
 # ============================== defines ======================================
 
 RAW_PATH = "../processed"
@@ -27,10 +28,12 @@ file_name = os.path.basename(args.dataset)
 df, header = DatasetHelper.load_dataset(args.dataset)
 print df.head()
 
+df_pdr = df.groupby([df.src, df.dst, df.transaction_id]).pdr.mean()
+
 # plot
 plt.hist(df.pdr.dropna(), bins=[i*5 for i in range(0, 21)])
 
-plt.xlabel('PDR %')
+plt.xlabel('PDR (%)')
 plt.ylabel('number of PDR measurements')
 plt.xlim([0, 100])
 plt.tight_layout()

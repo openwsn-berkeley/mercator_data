@@ -12,6 +12,7 @@ import DatasetHelper
 import matplotlib.pyplot as plt
 import os
 
+plt.rcParams.update({'font.size': 14})
 # ============================== defines ======================================
 
 RAW_PATH = "../processed"
@@ -41,8 +42,8 @@ plt.plot(df_link.mean_rssi, df_link.pdr, '+', zorder=0)
 plt.errorbar(mean_index, mean_pdr, std_pdr)
 
 plt.xlabel('RSSI average (dBm)')
-plt.ylabel('PDR %')
-#plt.xlim([-95, -15])
+plt.ylabel('PDR (%)')
+plt.xlim([-95, -15])
 plt.ylim([0, 110])
 plt.tight_layout()
 plt.grid(True)

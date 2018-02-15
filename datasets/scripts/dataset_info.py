@@ -48,31 +48,29 @@ def main():
 
     # parsing user arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("testbed", help="The name of the testbed data to process", type=str)
-    parser.add_argument("date", help="The date of the dataset", type=str)
+    parser.add_argument("dataset", help="The path to the dataset", type=str)
     args = parser.parse_args()
 
     # load the dataset
-    raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
-    df = DatasetHelper.load_dataset(raw_file_path)
+    file_name = os.path.basename(args.dataset)
+    df, header = DatasetHelper.load_dataset(args.dataset)
     logging.info("Dataset loaded.")
-
-    dtsh = DatasetHelper.helper(df)
 
     # compute degree and radius
     avg_degree_list = []
-    for name, df_goup in df.groupby(["transctr"]):
-        logging.info("Transaction: {0}".format(name))
-        if df_goup.empty:
+    for name, df_trans in df.groupby(pd.Grouper(freq="1H")):
+        if df_trans.empty:
             continue
 
+        #df_link = df_trans.groupby(["src", "dst"]).mean().reset_index().dropna()
+
         # removing links with PDR <= 50
-        df_pdr = df[df.pdr > 50]
+        df_filtered = df_trans[df_trans.mean_rssi > -85]
 
         # create graph
         G = nx.Graph()
-        G.add_nodes_from(df_goup.srcmac)
-        G.add_edges_from(df_pdr.groupby(["src", "dst"]).groups.keys())
+        G.add_nodes_from(df_trans.src.unique())
+        G.add_edges_from(df_filtered.groupby(["src", "dst"]).groups.keys())
 
         # calculate average degree
         avg_degree = sum([d[1] for d in G.degree()]) / float(G.number_of_nodes())
@@ -80,30 +78,30 @@ def main():
         # save degree and radius
         avg_degree_list.append(avg_degree)
 
-        del df_pdr
+        #del df_pdr
 
     # calculate average degree and radius
     avg_net_degree = sum(avg_degree_list) / float(len(avg_degree_list))
 
     # format collected information
     json_data = {
-        "start_date": dtsh["start_date"],
-        "end_date": dtsh["end_date"],
-        "nb_nodes": dtsh["node_count"],
-        "nb_channels": dtsh["channel_count"],
-        "transaction_count": dtsh["transaction_count"],
-        "tx_count": dtsh["tx_count"],
-        "tx_ifdur": dtsh["tx_ifdur"],
-        "tx_length": dtsh["tx_length"],
+        # "start_date": header["start_date"],
+        # "end_date": header["end_date"],
+        # "nb_nodes": header["node_count"],
+        # "nb_channels": header["channel_count"],
+        # "transaction_count": header["transaction_count"],
+        # "tx_count": header["tx_count"],
+        # "tx_ifdur": header["tx_ifdur"],
+        # "tx_length": header["tx_length"],
         "avg_degree": avg_net_degree,
     }
     print(json.dumps(json_data, indent=4))
 
     # write the information to a file
-    path = "{0}/{1}/".format(OUT_PATH, args.testbed)
+    path = "{0}/{1}/".format(OUT_PATH, header['site'])
     if not os.path.exists(path):
         os.makedirs(path)
-    with open(path + "{0}_info.json".format(args.date), 'w') as output_file:
+    with open(path + "{0}_info.json".format(header["start_date"]), 'w') as output_file:
         json.dump(json_data, output_file, indent=4)
 
 

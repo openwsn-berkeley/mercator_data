@@ -12,6 +12,7 @@ import logging
 import pandas as pd
 import os
 
+plt.rcParams.update({'font.size': 14})
 # ============================== logging ======================================
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -57,8 +58,9 @@ def main():
     plt.hist(avail_count, bins=[i for i in range(0, 18)])
 
     plt.xlabel('number of frequencies with PDR>50%')
-    plt.ylabel('number of measurements')
+    plt.ylabel('number of PDR measurements')
     plt.xlim([0, 17])
+    plt.xticks([t for t in range(0, 17)])
     plt.grid(True)
 
     path = "{0}/{1}".format(OUT_PATH, header['site'])
