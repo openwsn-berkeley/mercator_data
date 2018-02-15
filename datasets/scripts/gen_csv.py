@@ -17,6 +17,7 @@ import argparse
 import logging
 import pandas as pd
 from scipy.special import logsumexp
+import numpy as np
 import json
 
 import DatasetHelper
@@ -32,11 +33,15 @@ def get_pdr(df_link, dtsh):
     rx_count = len(df_link)
     tx_count = dtsh["tx_count"]
 
+    dbm_values = np.array(df_link["rssi"], dtype=float)
+    average_mw = sum(np.power(10, dbm_values / 10)) / len(dbm_values)
+    average_dbm = 10 * np.log10(average_mw)
+
     return pd.Series({
         "datetime": df_link.datetime.iloc[0],
         "transaction_id": df_link['transctr'].iloc[0],
         "pdr": 100 * rx_count / float(tx_count),
-        "mean_rssi": round(logsumexp(df_link["rssi"]), 2),
+        "mean_rssi": round(average_dbm, 2),
     })
 
 
