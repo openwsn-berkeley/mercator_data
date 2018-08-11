@@ -11,7 +11,7 @@ import datetime
 import os
 import json
 
-import DatasetHelper
+import dataset_helper
 
 # ============================== defines ======================================
 
@@ -31,7 +31,7 @@ def main():
 
     # load the dataset
     raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
-    df = DatasetHelper.load_dataset(raw_file_path)
+    df = dataset_helper.load_dataset(raw_file_path)
     logging.info("Dataset loaded.")
     #print df.head()
 

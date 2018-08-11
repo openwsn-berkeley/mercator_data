@@ -29,7 +29,7 @@ import networkx as nx
 import pandas as pd
 import logging
 
-import DatasetHelper
+import dataset_helper
 
 # ============================== logging ======================================
 
@@ -53,7 +53,7 @@ def main():
 
     # load the dataset
     file_name = os.path.basename(args.dataset)
-    df, header = DatasetHelper.load_dataset(args.dataset)
+    df, header = dataset_helper.load_dataset(args.dataset)
     logging.info("Dataset loaded.")
 
     # compute degree and radius

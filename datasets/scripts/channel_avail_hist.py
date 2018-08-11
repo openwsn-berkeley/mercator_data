@@ -6,7 +6,7 @@ Usage example:
 """
 
 import argparse
-import DatasetHelper
+import dataset_helper
 import matplotlib.pyplot as plt
 import logging
 import pandas as pd
@@ -27,7 +27,7 @@ OUT_PATH = "../results"
 # ============================== main =========================================
 
 def get_pdr(df_link):
-    dtsh_link = DatasetHelper.helper(df_link)
+    dtsh_link = dataset_helper.helper(df_link)
     rx_count = len(df_link)
     tx_expected = dtsh_link["tx_count"]
 
@@ -43,7 +43,7 @@ def main():
 
     # load the dataset
     file_name = os.path.basename(args.dataset)
-    df, header = DatasetHelper.load_dataset(args.dataset)
+    df, header = dataset_helper.load_dataset(args.dataset)
     logging.info("Dataset loaded.")
 
     # filter bad links

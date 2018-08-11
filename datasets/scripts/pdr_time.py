@@ -8,7 +8,7 @@ Usage example:
 
 import argparse
 import pandas as pd
-import DatasetHelper
+import dataset_helper
 import matplotlib.pyplot as plt
 
 # ============================== defines ======================================
@@ -28,7 +28,7 @@ def main():
 
     # load the dataset
     raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
-    df = DatasetHelper.load_dataset(raw_file_path)
+    df = dataset_helper.load_dataset(raw_file_path)
 
     pdr_grouped = df.pdr.groupby(pd.TimeGrouper('25Min')).mean().dropna()
 

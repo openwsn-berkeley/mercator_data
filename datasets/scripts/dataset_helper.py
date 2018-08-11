@@ -3,6 +3,73 @@ import json
 import pandas as pd
 import numpy as np
 import os
+import csv
+import gzip
+from datetime import datetime
+
+DTYPE = {
+    "timestamp": np.str,
+    "mac": np.str,
+    "frequency": np.uint8,
+    "length":np.uint32,
+    "rssi": np.int32,
+    "crc": np.bool,
+    "expected": np.bool,
+    "srcmac": np.str,
+    "transctr": np.uint32,
+    "pkctr": np.uint32,
+    "nbpackets": np.uint32,
+    "txpower": np.uint16,
+    "txifdur": np.uint32,
+    "txpksize": np.uint32,
+    "txfillbyte": np.str
+}
+
+def load_dataset_by_transaction(raw_file_path, transaction_id):
+    if os.path.isfile(raw_file_path + ".csv"):
+        raw_file_path += ".csv"
+    elif os.path.isfile(raw_file_path + ".csv.gz"):
+        raw_file_path += ".csv.gz"
+    else:
+        print "Files supported: .csv and .csv.gz"
+        quit()
+
+    data = []
+    header = None
+    transctr_id = 8
+
+    with gzip.open(raw_file_path, 'r') as f:
+        reader = csv.reader(f, delimiter=",")
+        for line in reader:
+
+            if header is None:
+                header = line
+                continue
+            else:
+                for idx, item in enumerate(line):
+                    item = DTYPE[header[idx]](item)
+                    line[idx] = item
+
+                    if idx == 0:
+                        line[idx] = datetime.strptime(line[idx], "%Y-%m-%d_%H.%M.%S")
+
+            if line[transctr_id] == transaction_id:
+                data.append(line)
+            elif int(line[transctr_id]) > transaction_id:
+                break
+
+    header[0] = "datetime"
+    df = pd.DataFrame(data, columns=header)
+
+    # clean dataset
+    print "Length: {0}".format(len(df))
+    df = df.drop_duplicates()
+    print "Length without duplicates: {0}".format(len(df))
+    df = df[(df.crc == 1) & (df.expected == 1)]
+    df.drop('crc', axis=1, inplace=True)
+    df.drop('expected', axis=1, inplace=True)
+
+    return df
 
 def load_raw_dataset(raw_file_path):
     if os.path.isfile(raw_file_path + ".csv"):
@@ -14,22 +81,7 @@ def load_raw_dataset(raw_file_path):
         quit()
 
     df = pd.read_csv(raw_file_path,
-                     dtype={"timestamp": np.str,
-                           "mac": np.str,
-                           "frequency": np.uint8,
-                           "length":np.uint32,
-                           "rssi": np.int32,
-                           "crc": np.bool,
-                           "expected": np.bool,
-                           "srcmac": np.str,
-                           "transctr": np.uint32,
-                           "pkctr": np.uint32,
-                           "nbpackets": np.uint32,
-                           "txpower": np.uint16,
-                           "txifdur": np.uint32,
-                           "txpksize": np.uint32,
-                           "txfillbyte": np.str
-                           },
+                     dtype=DTYPE,
                      date_parser = lambda timestamp: pd.datetime.strptime(timestamp, "%Y-%m-%d_%H.%M.%S"),
                      parse_dates = {'datetime': ['timestamp']},
                      #index_col = [0],  # make datetime column as index

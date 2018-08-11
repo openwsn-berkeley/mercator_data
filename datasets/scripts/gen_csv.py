@@ -14,13 +14,11 @@ datetime,src,dst,channel,mean_rssi,pdr
 
 import os
 import argparse
-import logging
 import pandas as pd
-from scipy.special import logsumexp
 import numpy as np
 import json
 
-import DatasetHelper
+import dataset_helper
 
 # ============================== defines ======================================
 
@@ -40,7 +38,7 @@ def get_pdr(df_link, dtsh):
     return pd.Series({
         "datetime": df_link.datetime.iloc[0],
         "transaction_id": df_link['transctr'].iloc[0],
-        "pdr": 100 * rx_count / float(tx_count),
+        "pdr": rx_count / float(tx_count),
         "mean_rssi": round(average_dbm, 2),
     })
 
@@ -55,35 +53,48 @@ def main():
 
     # load the dataset
     raw_file_path = "{0}/{1}/{2}".format(RAW_PATH, args.testbed, args.date)
-    df = DatasetHelper.load_raw_dataset(raw_file_path)
-    logging.info("Dataset loaded.")
 
-    # extract information
-    dtsh = DatasetHelper.helper(df)
+    transaction_id = 0
+    dtsh = None
+    header_added = False
 
-    # compute PDR and RSSI average for each link and for each frequency
-    df_pdr = df.groupby(["srcmac", "mac", "transctr", "frequency"]).\
-        apply(get_pdr, dtsh).reset_index()
+    while True:
+        df = dataset_helper.load_dataset_by_transaction(raw_file_path, transaction_id)
+        if df.empty:
+            break
 
-    # free space (ugly you said?)
-    del df
+        # extract information
+        if dtsh is None:
+            dtsh = dataset_helper.helper(df)
 
-    # cleaning
-    df_pdr.drop('transctr', axis=1, inplace=True)
-    df_pdr.set_index("datetime", inplace=True)
-    df_pdr.sort_index(inplace=True)
-    df_pdr.rename(columns={'srcmac': 'src', 'mac': 'dst', 'frequency': 'channel'},
-                  inplace=True)
+        # compute PDR and RSSI average for each link and for each frequency
+        df_pdr = df.groupby(["srcmac", "mac", "transctr", "frequency"]).\
+            apply(get_pdr, dtsh).reset_index()
 
-    # write dataset to file
-    path = "{0}/{1}".format(OUT_PATH, args.testbed)
-    if not os.path.exists(path):
-        os.makedirs(path)
-    df_pdr.to_csv("{0}/{1}.csv".format(path, args.date))
+        # cleaning
+        df_pdr.drop('transctr', axis=1, inplace=True)
+        df_pdr.set_index("datetime", inplace=True)
+        df_pdr.sort_index(inplace=True)
+        df_pdr.rename(columns={'srcmac': 'src', 'mac': 'dst', 'frequency': 'channel'},
+                      inplace=True)
 
-    # write dataset header at to of the csv
+        # write dataset to file
+        path = "{0}/{1}".format(OUT_PATH, args.testbed)
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if header_added is False:
+            df_pdr.to_csv("{0}/{1}.csv".format(path, args.date))
+            header_added = True
+        else:
+            df_pdr.to_csv("{0}/{1}.csv".format(path, args.date), mode='a', header=False)
+
+        transaction_id += 1
+
+    # write dataset header at top of the csv
     dtsh["site"] = args.testbed
+    dtsh["transaction_count"] = transaction_id
     header = json.dumps(dtsh)
+    path = "{0}/{1}".format(OUT_PATH, args.testbed)
     with open("{0}/{1}.csv".format(path, args.date), 'r+') as f:
         s = f.read()
         f.seek(0, 0)

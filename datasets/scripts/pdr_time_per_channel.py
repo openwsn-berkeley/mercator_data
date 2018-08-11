@@ -12,7 +12,7 @@ import matplotlib.dates as md
 import os
 import pandas as pd
 
-import DatasetHelper
+import dataset_helper
 
 plt.rcParams.update({'font.size': 14})
 # ============================== defines ======================================
@@ -29,7 +29,7 @@ args = parser.parse_args()
 
 # load the dataset
 file_name = os.path.basename(args.dataset)
-df, header = DatasetHelper.load_dataset(args.dataset)
+df, header = dataset_helper.load_dataset(args.dataset)
 logging.info("Dataset loaded.")
 
 color_list = ["blue", "red"]

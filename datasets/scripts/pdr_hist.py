@@ -6,7 +6,7 @@ Usage example:
 """
 
 import argparse
-import DatasetHelper
+import dataset_helper
 import matplotlib.pyplot as plt
 import os
 
@@ -25,7 +25,7 @@ args = parser.parse_args()
 
 # load the dataset
 file_name = os.path.basename(args.dataset)
-df, header = DatasetHelper.load_dataset(args.dataset)
+df, header = dataset_helper.load_dataset(args.dataset)
 print df.head()
 
 df_pdr = df.groupby([df.src, df.dst, df.transaction_id]).pdr.mean()
